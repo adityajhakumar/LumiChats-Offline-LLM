@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://lumichats.com/favicon.ico" width="80" height="80" alt="LumiChats Logo"/>
+<img src="https://lumichats.com/logo.png" width="80" height="80" alt="LumiChats Logo"/>
 
 # LumiChats Offline LLM
 
