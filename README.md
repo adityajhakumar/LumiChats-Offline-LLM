@@ -12,7 +12,7 @@
 [![Models on HuggingFace](https://img.shields.io/badge/Models-HuggingFace-yellow.svg)](https://huggingface.co/adityakum667388)
 [![Website](https://img.shields.io/badge/Website-lumichats.com-orange.svg)](https://lumichats.com)
 
-**[⬇️ Download Latest Release](https://drive.google.com/file/d/1cNY8gWysIEtwtxa2T80fn2gAaFkI_Qu5/view?usp=drive_link)** · **[🌐 Website](https://lumichats.com)** · **[🤗 Our Models](https://huggingface.co/adityakum667388)** · **[👨‍💻 Developer](https://github.com/adityajhakumar)**
+**[⬇️ Windows](https://drive.google.com/file/d/1cNY8gWysIEtwtxa2T80fn2gAaFkI_Qu5/view?usp=drive_link)** · **[🐧 Linux](https://drive.google.com/drive/folders/13Bh8BhaS1hgmK1xQyHwW7aMSodbSLAQs?usp=drive_link)** · **[🍎 macOS](https://drive.google.com/drive/folders/1uOSDT-Pjy8ymmvaHwRpm9DVx6SwTGHoM?usp=drive_link)** · **[🌐 Website](https://lumichats.com)** · **[🤗 Our Models](https://huggingface.co/adityakum667388)** · **[👨‍💻 Developer](https://github.com/adityajhakumar)**
 
 ---
 
@@ -46,6 +46,18 @@ Built on top of the powerful [GPT4All](https://github.com/nomic-ai/gpt4all) engi
 | ⚡ **CPU Optimized** | No GPU needed — runs on everyday hardware |
 | 🆓 **100% Free** | Open source, no subscriptions, no paywalls |
 | 🤗 **LumiChats Models** | Fine-tuned models designed for instruction following |
+
+---
+
+## ⬇️ Download & Run
+
+### Pre-built Binaries (Recommended)
+
+| Platform | Link | Notes |
+|----------|------|-------|
+| 🪟 **Windows 10/11** | [Download (.zip)](https://drive.google.com/file/d/1cNY8gWysIEtwtxa2T80fn2gAaFkI_Qu5/view?usp=drive_link) | Extract and run `chat.exe` |
+| 🐧 **Linux** | [Download (.AppImage)](https://drive.google.com/drive/folders/13Bh8BhaS1hgmK1xQyHwW7aMSodbSLAQs?usp=drive_link) | Make executable and run |
+| 🍎 **macOS** | [Download (.dmg)](https://drive.google.com/drive/folders/1uOSDT-Pjy8ymmvaHwRpm9DVx6SwTGHoM?usp=drive_link) | Open DMG and drag to Applications |
 
 ---
 
