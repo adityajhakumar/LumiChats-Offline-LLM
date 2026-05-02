@@ -146,6 +146,10 @@ jobs:
           cp "$EXE" AppDir/usr/bin/LumiChats
           printf '[Desktop Entry]\nName=LumiChats\nExec=LumiChats\nIcon=lumichats\nType=Application\nCategories=Utility;\n' > AppDir/usr/share/applications/LumiChats.desktop
           cp installer/LumiChats.desktop AppDir/usr/share/applications/ 2>/dev/null || true
+          # Remove optional SQL plugins with missing system deps
+          rm -f ~/Qt/6.8.3/gcc_64/plugins/sqldrivers/libqsqlmimer.so
+          rm -f ~/Qt/6.8.3/gcc_64/plugins/sqldrivers/libqsqlodbc.so
+          rm -f ~/Qt/6.8.3/gcc_64/plugins/sqldrivers/libqsqlpsql.so
           QMAKE=~/Qt/6.8.3/gcc_64/bin/qmake \
           ./linuxdeploy-x86_64.AppImage \
             --appdir AppDir \
