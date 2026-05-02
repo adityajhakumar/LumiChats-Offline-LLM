@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=LumiChats
+Comment=Run AI models offline, privately. No internet. No GPU. No cloud.
+Exec=chat
+Icon=lumichats
+Terminal=false
+Type=Application
+Categories=Utility;Science;Education;
+Keywords=AI;LLM;offline;privacy;chat;
