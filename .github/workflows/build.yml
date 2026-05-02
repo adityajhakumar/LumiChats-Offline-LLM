@@ -147,13 +147,8 @@ jobs:
           EXE=$(find build/bin -name "chat" -type f | head -1)
           mkdir -p AppDir/usr/bin AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/256x256/apps
           cp "$EXE" AppDir/usr/bin/LumiChats
-          cp installer/LumiChats.desktop AppDir/usr/share/applications/ 2>/dev/null || \
-            echo "[Desktop Entry]
-Name=LumiChats
-Exec=LumiChats
-Icon=lumichats
-Type=Application
-Categories=Utility;" > AppDir/usr/share/applications/LumiChats.desktop
+          printf '[Desktop Entry]\nName=LumiChats\nExec=LumiChats\nIcon=lumichats\nType=Application\nCategories=Utility;\n' > AppDir/usr/share/applications/LumiChats.desktop
+          cp installer/LumiChats.desktop AppDir/usr/share/applications/ 2>/dev/null || true
           QMAKE=~/Qt/6.8.3/gcc_64/bin/qmake \
           ./linuxdeploy-x86_64.AppImage \
             --appdir AppDir \
