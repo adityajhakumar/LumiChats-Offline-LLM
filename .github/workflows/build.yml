@@ -6,9 +6,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  # ─────────────────────────────────────────────
-  # macOS build
-  # ─────────────────────────────────────────────
   build-macos:
     name: macOS DMG
     runs-on: macos-14
@@ -21,7 +18,7 @@ jobs:
           git clone --recurse-submodules --depth=1 \
             https://github.com/nomic-ai/gpt4all.git gpt4all-src
 
-      - name: Overlay LumiChats custom files
+      - name: Overlay LumiChats custom files + patch app name
         run: |
           cp lumichats-src/qml/Theme.qml          gpt4all-src/gpt4all-chat/qml/
           cp lumichats-src/qml/HomeView.qml        gpt4all-src/gpt4all-chat/qml/
@@ -29,6 +26,11 @@ jobs:
           cp lumichats-src/qml/StartupDialog.qml   gpt4all-src/gpt4all-chat/qml/
           cp lumichats-src/qml/main.qml            gpt4all-src/gpt4all-chat/
           cp lumichats-src/src/download.cpp        gpt4all-src/gpt4all-chat/src/
+          sed -i '' 's/MACOSX_BUNDLE_BUNDLE_NAME "GPT4All"/MACOSX_BUNDLE_BUNDLE_NAME "LumiChats"/g' gpt4all-src/gpt4all-chat/CMakeLists.txt
+          sed -i '' 's/MACOSX_BUNDLE_GUI_IDENTIFIER "io.nomic.gpt4all"/MACOSX_BUNDLE_GUI_IDENTIFIER "com.lumichats.app"/g' gpt4all-src/gpt4all-chat/CMakeLists.txt
+          sed -i '' 's/setApplicationName("GPT4All")/setApplicationName("LumiChats")/g' gpt4all-src/gpt4all-chat/src/main.cpp
+          sed -i '' 's/setOrganizationName("nomic.ai")/setOrganizationName("LumiChats")/g' gpt4all-src/gpt4all-chat/src/main.cpp
+          sed -i '' 's/setOrganizationDomain("nomic.ai")/setOrganizationDomain("lumichats.com")/g' gpt4all-src/gpt4all-chat/src/main.cpp
 
       - name: Install Qt 6.8.3
         run: |
@@ -54,18 +56,22 @@ jobs:
         run: |
           APP=$(find build -name "*.app" | head -1)
           echo "Found app: $APP"
-          # Run macdeployqt, ignore non-fatal SQL plugin warnings
+          # Rename to LumiChats.app
+          APPDIR=$(dirname "$APP")
+          if [ "$(basename $APP)" != "LumiChats.app" ]; then
+            mv "$APP" "$APPDIR/LumiChats.app"
+            APP="$APPDIR/LumiChats.app"
+          fi
+          # Remove optional SQL plugins that cause macdeployqt warnings
+          rm -f ~/Qt/6.8.3/macos/plugins/sqldrivers/libqsqlmimer.dylib
+          rm -f ~/Qt/6.8.3/macos/plugins/sqldrivers/libqsqlodbc.dylib
+          rm -f ~/Qt/6.8.3/macos/plugins/sqldrivers/libqsqlpsql.dylib
+          # Run macdeployqt fully - this bundles ALL Qt libs inside the .app
           ~/Qt/6.8.3/macos/bin/macdeployqt "$APP" \
             -qmldir=gpt4all-src/gpt4all-chat/qml \
-            -dmg || true
-          # Find and rename the DMG
+            -dmg
           DMG=$(find . -name "*.dmg" | head -1)
-          if [ -z "$DMG" ]; then
-            echo "DMG not found, creating manually"
-            hdiutil create -volname LumiChats -srcfolder "$APP" -ov -format UDZO LumiChats-macOS.dmg
-          else
-            mv "$DMG" LumiChats-macOS.dmg
-          fi
+          mv "$DMG" LumiChats-macOS.dmg
           ls -la LumiChats-macOS.dmg
 
       - name: Upload DMG
@@ -74,9 +80,6 @@ jobs:
           name: LumiChats-macOS
           path: LumiChats-macOS.dmg
 
-  # ─────────────────────────────────────────────
-  # Linux build
-  # ─────────────────────────────────────────────
   build-linux:
     name: Linux AppImage
     runs-on: ubuntu-24.04
@@ -89,7 +92,7 @@ jobs:
           git clone --recurse-submodules --depth=1 \
             https://github.com/nomic-ai/gpt4all.git gpt4all-src
 
-      - name: Overlay LumiChats custom files
+      - name: Overlay LumiChats custom files + patch app name
         run: |
           cp lumichats-src/qml/Theme.qml          gpt4all-src/gpt4all-chat/qml/
           cp lumichats-src/qml/HomeView.qml        gpt4all-src/gpt4all-chat/qml/
@@ -97,6 +100,9 @@ jobs:
           cp lumichats-src/qml/StartupDialog.qml   gpt4all-src/gpt4all-chat/qml/
           cp lumichats-src/qml/main.qml            gpt4all-src/gpt4all-chat/
           cp lumichats-src/src/download.cpp        gpt4all-src/gpt4all-chat/src/
+          sed -i 's/setApplicationName("GPT4All")/setApplicationName("LumiChats")/g' gpt4all-src/gpt4all-chat/src/main.cpp
+          sed -i 's/setOrganizationName("nomic.ai")/setOrganizationName("LumiChats")/g' gpt4all-src/gpt4all-chat/src/main.cpp
+          sed -i 's/setOrganizationDomain("nomic.ai")/setOrganizationDomain("lumichats.com")/g' gpt4all-src/gpt4all-chat/src/main.cpp
 
       - name: Install system dependencies
         run: |
@@ -145,9 +151,8 @@ jobs:
           mkdir -p AppDir/usr/bin AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/256x256/apps
           cp "$EXE" AppDir/usr/bin/LumiChats
           cp installer/lumichats.png AppDir/usr/share/icons/hicolor/256x256/apps/lumichats.png
-          printf '[Desktop Entry]\nName=LumiChats\nExec=LumiChats\nIcon=lumichats\nType=Application\nCategories=Utility;\n' > AppDir/usr/share/applications/LumiChats.desktop
-
-          # Remove optional SQL plugins with missing system deps
+          printf '[Desktop Entry]\nName=LumiChats\nExec=LumiChats\nIcon=lumichats\nType=Application\nCategories=Utility;\n' \
+            > AppDir/usr/share/applications/LumiChats.desktop
           rm -f ~/Qt/6.8.3/gcc_64/plugins/sqldrivers/libqsqlmimer.so
           rm -f ~/Qt/6.8.3/gcc_64/plugins/sqldrivers/libqsqlodbc.so
           rm -f ~/Qt/6.8.3/gcc_64/plugins/sqldrivers/libqsqlpsql.so
