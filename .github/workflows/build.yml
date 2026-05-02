@@ -35,7 +35,7 @@ jobs:
           pip3 install aqtinstall --break-system-packages
           aqt install-qt mac desktop 6.8.3 clang_64 \
             -O ~/Qt \
-            --modules qthttpserver qtlanguageserver qtshadertools qtquick3d qt5compat qtwebsockets
+            --modules qthttpserver qtlanguageserver qtshadertools qtquick3d qt5compat qtwebsockets qtpdf
 
       - name: Configure CMake
         run: |
@@ -79,7 +79,7 @@ jobs:
   # ─────────────────────────────────────────────
   build-linux:
     name: Linux AppImage
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout LumiChats repo
         uses: actions/checkout@v4
@@ -102,7 +102,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            gcc-13 g++-13 cmake \
+            gcc g++ cmake \
             libgl1-mesa-dev \
             libx11-dev libxext-dev libxfixes-dev \
             libxi-dev libxrender-dev libxcb1-dev \
@@ -113,8 +113,6 @@ jobs:
             libxcb-randr0-dev libxcb-render-util0-dev \
             libxcb-util-dev libxkbcommon-dev \
             libxkbcommon-x11-dev fuse
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100
-          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
 
       - name: Install Qt 6.8.3
         run: |
@@ -129,8 +127,6 @@ jobs:
           cmake -S gpt4all-src/gpt4all-chat -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_PREFIX_PATH=~/Qt/6.8.3/gcc_64 \
-            -DCMAKE_C_COMPILER=gcc-13 \
-            -DCMAKE_CXX_COMPILER=g++-13 \
             -DLLMODEL_CUDA=OFF \
             -DLLMODEL_VULKAN=OFF \
             -DLLMODEL_KOMPUTE=OFF \
