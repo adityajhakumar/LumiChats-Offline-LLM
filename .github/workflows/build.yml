@@ -106,8 +106,9 @@ jobs:
 
       - name: Install Qt 6.8.3
         run: |
-          pip3 install aqtinstall --break-system-packages
-          aqt install-qt linux desktop 6.8.3 linux_gcc_64 \
+          python3 -m venv ~/venv
+          ~/venv/bin/pip install aqtinstall
+          ~/venv/bin/aqt install-qt linux desktop 6.8.3 linux_gcc_64 \
             -O ~/Qt \
             --modules qthttpserver qtlanguageserver qtshadertools qtquick3d qt5compat qtwebsockets qtpdf
 
