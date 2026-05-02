@@ -35,7 +35,7 @@ jobs:
           pip3 install aqtinstall --break-system-packages
           aqt install-qt mac desktop 6.8.3 clang_64 \
             -O ~/Qt \
-            --modules qthttpserver qtlanguageserver qtshadertools qtquick3d qt5compat qtwebsockets qtpdf
+            --modules qthttpserver qtlanguageserver qtshadertools qtquick3d qt5compat qtwebsockets
 
       - name: Configure CMake
         run: |
@@ -53,10 +53,20 @@ jobs:
       - name: Package DMG
         run: |
           APP=$(find build -name "*.app" | head -1)
+          echo "Found app: $APP"
+          # Run macdeployqt, ignore non-fatal SQL plugin warnings
           ~/Qt/6.8.3/macos/bin/macdeployqt "$APP" \
             -qmldir=gpt4all-src/gpt4all-chat/qml \
-            -dmg
-          mv *.dmg LumiChats-macOS.dmg
+            -dmg || true
+          # Find and rename the DMG
+          DMG=$(find . -name "*.dmg" | head -1)
+          if [ -z "$DMG" ]; then
+            echo "DMG not found, creating manually"
+            hdiutil create -volname LumiChats -srcfolder "$APP" -ov -format UDZO LumiChats-macOS.dmg
+          else
+            mv "$DMG" LumiChats-macOS.dmg
+          fi
+          ls -la LumiChats-macOS.dmg
 
       - name: Upload DMG
         uses: actions/upload-artifact@v4
@@ -92,7 +102,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            build-essential cmake \
+            gcc-13 g++-13 cmake \
             libgl1-mesa-dev \
             libx11-dev libxext-dev libxfixes-dev \
             libxi-dev libxrender-dev libxcb1-dev \
@@ -103,6 +113,8 @@ jobs:
             libxcb-randr0-dev libxcb-render-util0-dev \
             libxcb-util-dev libxkbcommon-dev \
             libxkbcommon-x11-dev fuse
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
 
       - name: Install Qt 6.8.3
         run: |
@@ -110,13 +122,15 @@ jobs:
           ~/venv/bin/pip install aqtinstall
           ~/venv/bin/aqt install-qt linux desktop 6.8.3 linux_gcc_64 \
             -O ~/Qt \
-            --modules qthttpserver qtlanguageserver qtshadertools qtquick3d qt5compat qtwebsockets qtpdf
+            --modules qthttpserver qtlanguageserver qtshadertools qtquick3d qt5compat qtwebsockets
 
       - name: Configure CMake
         run: |
           cmake -S gpt4all-src/gpt4all-chat -B build \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_PREFIX_PATH=~/Qt/6.8.3/gcc_64 \
+            -DCMAKE_C_COMPILER=gcc-13 \
+            -DCMAKE_CXX_COMPILER=g++-13 \
             -DLLMODEL_CUDA=OFF \
             -DLLMODEL_VULKAN=OFF \
             -DLLMODEL_KOMPUTE=OFF \
@@ -133,8 +147,13 @@ jobs:
           EXE=$(find build/bin -name "chat" -type f | head -1)
           mkdir -p AppDir/usr/bin AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/256x256/apps
           cp "$EXE" AppDir/usr/bin/LumiChats
-          cp installer/LumiChats.desktop AppDir/usr/share/applications/
-          cp installer/lumichats.png AppDir/usr/share/icons/hicolor/256x256/apps/ 2>/dev/null || true
+          cp installer/LumiChats.desktop AppDir/usr/share/applications/ 2>/dev/null || \
+            echo "[Desktop Entry]
+Name=LumiChats
+Exec=LumiChats
+Icon=lumichats
+Type=Application
+Categories=Utility;" > AppDir/usr/share/applications/LumiChats.desktop
           QMAKE=~/Qt/6.8.3/gcc_64/bin/qmake \
           ./linuxdeploy-x86_64.AppImage \
             --appdir AppDir \
