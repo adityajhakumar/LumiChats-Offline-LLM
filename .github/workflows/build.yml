@@ -144,6 +144,7 @@ jobs:
           EXE=$(find build/bin -name "chat" -type f | head -1)
           mkdir -p AppDir/usr/bin AppDir/usr/share/applications AppDir/usr/share/icons/hicolor/256x256/apps
           cp "$EXE" AppDir/usr/bin/LumiChats
+          cp installer/lumichats.png AppDir/usr/share/icons/hicolor/256x256/apps/lumichats.png
           printf '[Desktop Entry]\nName=LumiChats\nExec=LumiChats\nIcon=lumichats\nType=Application\nCategories=Utility;\n' > AppDir/usr/share/applications/LumiChats.desktop
 
           # Remove optional SQL plugins with missing system deps
