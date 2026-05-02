@@ -112,7 +112,8 @@ jobs:
             libxcb-xfixes0-dev libxcb-shape0-dev \
             libxcb-randr0-dev libxcb-render-util0-dev \
             libxcb-util-dev libxkbcommon-dev \
-            libxkbcommon-x11-dev fuse
+            libxkbcommon-x11-dev fuse \
+            libxcb-cursor-dev
 
       - name: Install Qt 6.8.3
         run: |
