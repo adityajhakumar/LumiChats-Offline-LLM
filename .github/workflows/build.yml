@@ -120,7 +120,7 @@ jobs:
           ~/venv/bin/pip install aqtinstall
           ~/venv/bin/aqt install-qt linux desktop 6.8.3 linux_gcc_64 \
             -O ~/Qt \
-            --modules qthttpserver qtlanguageserver qtshadertools qtquick3d qt5compat qtwebsockets
+            --modules qthttpserver qtlanguageserver qtshadertools qtquick3d qt5compat qtwebsockets qtpdf
 
       - name: Configure CMake
         run: |
